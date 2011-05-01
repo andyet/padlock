@@ -2,6 +2,14 @@
 
 Padlock works to prevent unexpected code execution when dealing with asynchronous callbacks. Call a function with lock to execute it as soon as a lock can be attained, and unlock it at all of your possible callback end-points. Use the same lock on other functions that you don't want to interrupt. Code will execute in order as the lock can be acquired.
 
+#Why
+
+I wrote this to deal with node_redis in the `WATCH -> GET -> MULTI ... values using the GET ... EXEC` scenario. I repeatedly had issues with other functions happening between the `WATCH` and the `MULTI` that would send commands and interrupt my `WATCH`. So now in my usage, any function with a `WATCH` will lock and unlock in the `EXEC` callback.
+
+Could I have done this with another synchronous library? Maybe, but I found this straight and to the point.
+
+/This is my synchronous library. There are many like it, but this one is mine./
+
 ## Examples
 
 ### Out of Order
