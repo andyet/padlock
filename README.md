@@ -14,6 +14,33 @@ Could I have done this with another synchronous library? Maybe, but I found this
 
     npm install padlock
 
+## Methods
+`lockid = Padlock.acquire(callback, args, ctx, timeout)` (ctx & timeout optional)
+Acquire a lock or queue up a function. Will never not, but will queue callack
+if lock is unsuccesful, unlike runwithlock().
+
+`Padlock.runwithlock(callback, args, ctx, timeout)` (ctx & timeout optional)
+Acquire a lock and run callback or queue up the callback on a failed lock. Will execute
+callback if initial lock attempt is successful, unlike acquire.
+
+`bool = Padlock.islocked()`
+Check to see if the lock is currently acquired.
+
+`Padlock.release(lockid)` (lockid is optional)
+Undo the lock. Can be conditional on the current lock being lockid.
+
+`Padock.require(callback, ctx, timeout)` (ctx & timeout optional)
+Wrap a funcion call in a function that acquires a lock before running.
+
+## Events
+
+The Padlock instance is an EventEmitter. You can subscribe to events with `Padlock.on(...)`, `Padlock.once(...)` etc.
+
+Here are the events (these all pass the lockid as an argument):  
+`locked` -- sent when a lock is acquired.  
+`unlocked` -- sent when a lock is released (warning, may not be unlocked by the time you get this event)  
+`timeout` -- called when a lock hasn't been released in the timeout time. You may want to release the lock at this point using the lockid argument when calling `release`.
+
 ## Examples
 
 ### Out of Order

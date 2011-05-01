@@ -47,8 +47,8 @@ Padlock.prototype = Object.create(EventEmitter.prototype, {
 });
 
 /**
- * Acquire a lock or queue up a function. Will never execute or queue callack
- * if lock is succesful, unlike runwithlock().
+ * Acquire a lock or queue up a function. Will never not, but will queue callack
+ * if lock is unsuccesful, unlike runwithlock().
  *
  * @param callback -- function to call when lock is acquired
  * @param args
