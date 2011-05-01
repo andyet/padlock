@@ -8,7 +8,7 @@ I wrote this to deal with node_redis in the `WATCH -> GET -> MULTI ... values us
 
 Could I have done this with another synchronous library? Maybe, but I found this straight and to the point.
 
-/This is my synchronous library. There are many like it, but this one is mine./
+> This is my synchronous library. There are many like it, but this one is mine.
 
 ## Examples
 
