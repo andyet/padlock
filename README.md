@@ -10,6 +10,10 @@ Could I have done this with another synchronous library? Maybe, but I found this
 
 **The biggest advantage is that functions that do not use your lock will be uninterrupted by your locked callback.** That is, you may have a lot of events and functions executing during your lock, but so long as you use your lock selectively, node.js will not wait on your lock release to run unrelated code. This is significantly different to some (maybe all?) of the synchronous libs from node.js, and should keep your service running very quickly dispite waiting on callbacks semi-synchronously.
 
+##Install
+
+    npm install padlock
+
 ## Examples
 
 ### Out of Order
@@ -61,10 +65,7 @@ Could I have done this with another synchronous library? Maybe, but I found this
     }, 200]);
     logit("c");
 
-    lock.runwithlock(function() {
-        console.log("the end!");
-        lock.release();
-    });
+    logit("the end!");
 
 > a  
 > b  
