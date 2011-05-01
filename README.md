@@ -1,6 +1,6 @@
 # Padlock
 
-Padlock works to prevent unexpected code execution when dealing with asynchronous callbacks. Call a function with lock to execute it as soon as a lock can be attained, and unlock it at all of your possible callback end-points. Use the same lock on other functions that you don't want to interrupt. Code will execute in order as the lock can be acquired.
+Padlock works to selectively prevent conflicting/interrupting code execution when dealing with asynchronous callbacks. Call a function with lock to execute it as soon as a lock can be attained, and unlock it at all of your possible callback end-points. Use the same lock on other functions that you don't want to interrupt, and leave functions that you don't mind interrupting your lock alone. Locked functions will execute in order as the lock can be acquired.
 
 #Why
 
