@@ -4,7 +4,7 @@ Padlock works to prevent unexpected code execution when dealing with asynchronou
 
 #Why
 
-I wrote this to deal with node_redis in the `WATCH -> GET -> MULTI ... values using the GET ... EXEC` scenario. I repeatedly had issues with other functions happening between the `WATCH` and the `MULTI` that would send commands and interrupt my `WATCH`. I confirmed that this is a known issue that he'd like to solve with the author. So I wrote this to use where any function with a `WATCH` will lock and unlock in the `EXEC` callback.
+I wrote this to deal with node_redis in the `WATCH -> GET -> MULTI ... values using the GET ... EXEC` scenario. I repeatedly had issues with other functions happening between the `WATCH` and the `MULTI` that would send commands and interrupt my `WATCH`. I confirmed with the author that this is a known issue he plans on solving. In the meantime, I wrote this to use in any function with a `WATCH` will lock and unlock in the `EXEC` callback. I'm sure you could use this anywhere you need synchronous flow for certain events.
 
 Could I have done this with another synchronous library? Maybe, but I found this straight and to the point.
 
