@@ -4,16 +4,16 @@ Padlock works to prevent unexpected code execution when dealing with asynchronou
 
 #Why
 
-I wrote this to deal with node_redis in the `WATCH -> GET -> MULTI ... values using the GET ... EXEC` scenario. I repeatedly had issues with other functions happening between the `WATCH` and the `MULTI` that would send commands and interrupt my `WATCH`. So now in my usage, any function with a `WATCH` will lock and unlock in the `EXEC` callback.
+I wrote this to deal with node_redis in the `WATCH -> GET -> MULTI ... values using the GET ... EXEC` scenario. I repeatedly had issues with other functions happening between the `WATCH` and the `MULTI` that would send commands and interrupt my `WATCH`. I confirmed that this is a known issue that he'd like to solve with the author. So I wrote this to use where any function with a `WATCH` will lock and unlock in the `EXEC` callback.
 
 Could I have done this with another synchronous library? Maybe, but I found this straight and to the point.
 
-> This is my synchronous library. There are many like it, but this one is mine.
+**The biggest advantage is that functions that do not use your lock will be uninterrupted by your locked callback.** That is, you may have a lot of events and functions executing during your lock, but so long as you use your lock selectively, node.js will not wait on your lock release to run unrelated code. This is significantly different to some (maybe all?) of the synchronous libs from node.js, and should keep your service running very quickly dispite waiting on callbacks semi-synchronously.
 
 ## Examples
 
 ### Out of Order
-    var Padlock = require("./padlock.js").Padlock;
+    var Padlock = require("padlock").Padlock;
 
     var lock = new Padlock();
 
@@ -24,10 +24,9 @@ Could I have done this with another synchronous library? Maybe, but I found this
     }, 200);
     console.log("end");
 
-#### Output
-     start
-     end
-     middle
+> start
+> end
+> middle
 
 ### Ensuring Order
     lock.runwithlock(function () {
@@ -43,10 +42,9 @@ Could I have done this with another synchronous library? Maybe, but I found this
         lock.release();
     });
 
-#### Output
-    start
-    middle
-    end
+>  start
+>  middle
+>  end
 
 ### Replacing a Function with a Lock Requirement
     function logit(x) {
@@ -68,8 +66,7 @@ Could I have done this with another synchronous library? Maybe, but I found this
         lock.release();
     });
 
-#### Output
-    a
-    b
-    c
-    the end!
+> a
+> b
+> c
+> the end!
