@@ -34,9 +34,9 @@ Padlock.prototype = Object.create(EventEmitter.prototype, {
  *
  * @return new lockid
  */
-function padlock_acquire(callback, args, ctx, timeout) {
+function padlock_acquire(callback, args, ctx, timeout, implicit) {
     if(this.locked === true) {
-        this.blocked_queue.push([callback, args, ctx]);
+        this.blocked_queue.push([callback, args, ctx, implicit]);
         return false;
     } 
     ++this.lockid;
@@ -66,7 +66,7 @@ function padlock_acquire(callback, args, ctx, timeout) {
  * @return new lockid
  */
 function padlock_runwithlock(callback, args, ctx, timeout) {
-    var lockid = this.acquire(callback, args, ctx, timeout);
+    var lockid = this.acquire(callback, args, ctx, timeout, true);
     if(lockid) {
         if(ctx === undefined) {
             callback.apply(this, args);
@@ -87,7 +87,7 @@ function padlock_islocked() {
  *
  * @param lockid (optional)
  */
-function padlock_unlock(lockid) {
+function padlock_release(lockid) {
     if(lockid === undefined || lockid == this.lockid) {
         this.locked = false;
         process.nextTick(function () {
@@ -104,6 +104,9 @@ function padlock_runblocked() {
     while(!this.locked) {
         var callbackd = this.blocked_queue.shift();
         if(callbackd === undefined) { break; }
+        if(true) { 
+            this.locked = true 
+        }
         if(callbackd[2] === undefined) {
             callbackd[0].apply(this, callbackd[1]);
         } else {
@@ -133,7 +136,8 @@ function padlock_require(callback, ctx, timeout) {
 Padlock.prototype.acquire = padlock_acquire;
 Padlock.prototype.runwithlock = padlock_runwithlock;
 Padlock.prototype.islocked = padlock_islocked;
-Padlock.prototype.unlock = padlock_unlock;
+Padlock.prototype.release = padlock_release;
+Padlock.prototype.unlock = padlock_release;
 Padlock.prototype.runblocked = padlock_runblocked;
 Padlock.prototype.require = padlock_require;
 

@@ -31,7 +31,7 @@ function updateList3Eventually(x) {
 //a set of functions where one is asynchronous and could get out of order
 updateList1("start");
 setTimeout(function() {
-    list1.push("middle");
+    list1.push("bad - middle");
 }, 200);
 updateList1("end");
 
