@@ -57,9 +57,9 @@ Padlock.prototype = Object.create(EventEmitter.prototype, {
  *
  * @return new lockid
  */
-function padlock_acquire(callback, args, ctx, timeout, implicit) {
+function padlock_acquire(callback, args, ctx, timeout) {
     if(this.locked === true) {
-        this.blocked_queue.push([callback, args, ctx, implicit]);
+        this.blocked_queue.push([callback, args, ctx, timeout]);
         return false;
     } 
     ++this.lockid;
@@ -68,8 +68,9 @@ function padlock_acquire(callback, args, ctx, timeout, implicit) {
     var lastlocked = this.lockid;
     if(timeout) {
         setTimeout(function () {
-            if(lastlocked == this.lockid) {
-                this.emit('timeout', this.lockid);
+            if(lastlocked == this.lockid && this.locked) {
+                this.emit('timeout', this.lockid, callback, args);
+                this.release()
             }
         }.bind(this), timeout);
     }
@@ -127,9 +128,23 @@ function padlock_runblocked() {
     while(!this.locked) {
         var callbackd = this.blocked_queue.shift();
         if(callbackd === undefined) { break; }
-        if(true) { 
-            this.locked = true 
+        //this.locked = true 
+        
+        var timeout = callbackd[3];
+        ++this.lockid;
+        this.lockid %= 65000;
+        this.locked = true;
+        var lastlocked = this.lockid;
+        if(timeout) {
+            setTimeout(function () {
+                if(lastlocked == this.lockid && this.locked) {
+                    this.emit('timeout', this.lockid, callbackd[0], callbackd[1]);
+                    this.release()
+                }
+            }.bind(this), timeout);
         }
+        this.emit('locked', this.lockid);
+
         if(callbackd[2] === undefined) {
             callbackd[0].apply(this, callbackd[1]);
         } else {

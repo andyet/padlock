@@ -50,6 +50,14 @@ updateList3("start");
 updateList3Eventually("middle");
 updateList3("end");
 
+lock.on('timeout', function(lockid, callback, args) {
+    console.log("Timed out: ", callback.toString());
+});
+
+lock.runwithlock(function() {
+    console.log("Hi, I won't unlock.");
+}, null, null, 3000);
+
 lock.runwithlock(function() {
     console.log(list1, list2, list3);
     assert.ok((list1[0] == 'start' && list1[1] == 'end'), "Asserting out of order list 1...");
@@ -58,3 +66,5 @@ lock.runwithlock(function() {
     console.log("3 tests pass");
     lock.release();
 });
+
+setTimeout(function() { console.log('done'); }, 6000);
