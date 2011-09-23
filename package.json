@@ -1,6 +1,6 @@
 {
     "name": "padlock",
-    "version": "1.0.2",
+    "version": "1.1.0",
     "description": "Padlock works to prevent unexpected code execution when dealing with asynchronous callbacks without blocking. Call a function with lock to execute it as soon as a lock can be attained, and unlock it at all of your possible callback end-points. Use the same lock on other functions that you don't want to interrupt. Code will execute in order as the lock can be acquired.",
     "keywords": ["lock", "flow", "control", "flow-control", "acquire", "release", "synchronous", "asynchronous"],
     "homepage": "github.com/andyet/padlock",
