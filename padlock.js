@@ -62,15 +62,15 @@ function padlock_acquire(callback, args, ctx, timeout) {
         this.blocked_queue.push([callback, args, ctx, timeout]);
         return false;
     } 
-    ++this.lockid;
     this.lockid %= 65000;
+    ++this.lockid;
     this.locked = true;
     var lastlocked = this.lockid;
     if(timeout) {
         setTimeout(function () {
             if(lastlocked == this.lockid && this.locked) {
                 this.emit('timeout', this.lockid, callback, args);
-                this.release()
+                this.release(this.lockid)
             }
         }.bind(this), timeout);
     }
@@ -131,8 +131,8 @@ function padlock_runblocked() {
         //this.locked = true 
         
         var timeout = callbackd[3];
-        ++this.lockid;
         this.lockid %= 65000;
+        ++this.lockid;
         this.locked = true;
         var lastlocked = this.lockid;
         if(timeout) {
